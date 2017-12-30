@@ -12,19 +12,22 @@ router.get('/stores/page/:page', catchErrors(storeController.getStores));
 router.get('/add', authController.isLoggedIn, storeController.addStore);
 
 router.post('/add',
-  storeController.upload,
-  catchErrors(storeController.resize),
-  catchErrors(storeController.createStore)
+    storeController.upload,
+    catchErrors(storeController.resize),
+    catchErrors(storeController.createStore)
 );
 
 router.post('/add/:id',
-  storeController.upload,
-  catchErrors(storeController.resize),
-  catchErrors(storeController.updateStore)
+    storeController.upload,
+    catchErrors(storeController.resize),
+    catchErrors(storeController.updateStore)
 );
 
 router.get('/stores/:id/edit', catchErrors(storeController.editStore));
 router.get('/store/:slug', catchErrors(storeController.getStoreBySlug));
+
+router.get('/store/:id/delete', catchErrors(storeController.deleteStore));
+router.post('/store/:id/delete', catchErrors(storeController.dropStore));
 
 router.get('/tags', catchErrors(storeController.getStoresByTag));
 router.get('/tags/:tag', catchErrors(storeController.getStoresByTag));
@@ -37,9 +40,9 @@ router.get('/register', userController.registerForm);
 // 2. register the user
 // 3. we need to log them in
 router.post('/register',
-  userController.validateRegister,
-  userController.register,
-  authController.login
+    userController.validateRegister,
+    userController.register,
+    authController.login
 );
 
 router.get('/logout', authController.logout);
@@ -49,14 +52,14 @@ router.post('/account', catchErrors(userController.updateAccount));
 router.post('/account/forgot', catchErrors(authController.forgot));
 router.get('/account/reset/:token', catchErrors(authController.reset));
 router.post('/account/reset/:token',
-  authController.confirmedPasswords,
-  catchErrors(authController.update)
+    authController.confirmedPasswords,
+    catchErrors(authController.update)
 );
 router.get('/map', storeController.mapPage);
 router.get('/hearts', authController.isLoggedIn, catchErrors(storeController.getHearts));
 router.post('/reviews/:id',
-  authController.isLoggedIn,
-  catchErrors(reviewController.addReview)
+    authController.isLoggedIn,
+    catchErrors(reviewController.addReview)
 );
 
 router.get('/top', catchErrors(storeController.getTopStores));

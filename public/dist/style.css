@@ -1057,6 +1057,9 @@ label {
       -ms-flex: 1;
           flex: 1; }
 
+.deletestore {
+  margin-bottom: 2rem; }
+
 .pagination {
   display: -ms-flexbox;
   display: flex;

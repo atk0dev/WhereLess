@@ -1,0 +1,7 @@
+extends layout
+
+block content
+  .inner
+    h2= title
+    form(action=`/store/${store._id}/delete` method="POST")
+      input(type="submit" value="Delete" class="button")
