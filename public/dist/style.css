@@ -990,7 +990,7 @@ label {
     font-size: 1.2rem;
     color: #999999; }
   .review__stars {
-    color: #ffc61b; }
+    color: #ffbf00; }
   .review__body {
     padding: 2rem; }
   .review p {
@@ -1011,7 +1011,7 @@ label {
     .reviewer__stars input {
       display: none; }
       .reviewer__stars input:checked ~ label {
-        color: #ffc61b; }
+        color: #ffbf00; }
       .reviewer__stars input + label {
         font-size: 0;
         /* These are in the opposite DOM order
@@ -1038,7 +1038,7 @@ label {
               order: 1; }
         .reviewer__stars input + label:hover,
         .reviewer__stars input + label:hover ~ label {
-          color: #ffe081; }
+          color: #ffd966; }
   .reviewer textarea {
     border: 0;
     outline: 0;
