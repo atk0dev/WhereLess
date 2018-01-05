@@ -6,11 +6,22 @@ include mixins/_review
 block content
   .single
     .single__hero
+      .single__actions
+        if user && store.author.equals(user._id)
+          .single__action.single__action--edit
+            a(href=`/stores/${store._id}/edit`)
+              != h.icon('pencil')
+        if (user && user.roles && (user.roles.indexOf("admin") >= 0))
+          .single__action.single__action--delete
+            a(href=`/store/${store._id}/delete`)
+              != h.icon('delete')
+
       img.single__image(src=`/uploads/${store.photo || 'store.png'}`)
       h2.title.title--single
         a(href=`/store/${store.slug}`) #{store.name}
-
-  .single__details.inner
+      .single__actions_end
+      
+  .single__details.inner    
     img.single__map(src=h.staticMap(store.location.coordinates))
     p.single__location= store.location.address
     p= store.description
@@ -22,14 +33,6 @@ block content
             a.tag__link(href=`/tags/${tag}`)
               span.tag__text  ##{tag}
     
-    ul
-      if user && store.author.equals(user._id)
-        li
-          a(href=`/stores/${store._id}/edit`) Edit
-      if (user && user.roles && (user.roles.indexOf("admin") >= 0))
-        li
-          a(href=`/store/${store._id}/delete`) Delete
-        
     if user
       +reviewForm(store)
 

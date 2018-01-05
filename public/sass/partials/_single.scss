@@ -4,7 +4,8 @@
         position: relative;
         overflow: hidden;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        justify-content: space-around;
         align-items: center;
         clip-path: polygon(0 0, 100% 0, 100% calc(100% - 2vw), 0% 100%);
         &:before {
@@ -53,6 +54,33 @@
         padding: 1rem;
         @media all and (max-width: 850px) {
             margin-right: 0;
+        }
+    }
+}
+
+.single__actions {
+    position: relative;
+    z-index: 2;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 1px 0 rgba(255, 255, 255, 0.2);
+    margin-bottom: 50px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    display: flex;
+    color: white;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.single__action {
+    font-size: 10px;
+    svg {
+        width: 25px;
+        fill: white
+    }
+    &--edit {
+        a {
+            border-bottom: 0;
         }
     }
 }
