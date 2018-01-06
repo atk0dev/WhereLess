@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
-const reviewSchema = new mongoose.Schema({
+const storeReviewSchema = new mongoose.Schema({
     created: {
         type: Date,
         default: Date.now
@@ -14,7 +14,7 @@ const reviewSchema = new mongoose.Schema({
     store: {
         type: mongoose.Schema.ObjectId,
         ref: 'Store',
-        required: 'You must supply a store!'
+        required: 'You must supply a store (for store review)!'
     },
     text: {
         type: String,
@@ -32,7 +32,7 @@ function autopopulate(next) {
     next();
 }
 
-reviewSchema.pre('find', autopopulate);
-reviewSchema.pre('findOne', autopopulate);
+storeReviewSchema.pre('find', autopopulate);
+storeReviewSchema.pre('findOne', autopopulate);
 
-module.exports = mongoose.model('Review', reviewSchema);
+module.exports = mongoose.model('StoreReview', storeReviewSchema);

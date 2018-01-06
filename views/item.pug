@@ -1,0 +1,41 @@
+extends layout
+
+include mixins/_reviewForm
+include mixins/_review
+
+block content
+  .single
+    .single__hero
+      .single__actions
+        if user && item.author.equals(user._id)
+          .single__action.single__action--edit
+            a(href=`/items/${item._id}/edit`)
+              != h.icon('pencil')
+        if (user && user.roles && (user.roles.indexOf("admin") >= 0))
+          .single__action.single__action--delete
+            a(href=`/item/${item._id}/delete`)
+              != h.icon('delete')
+
+      img.single__image(src=`/uploads/${item.photo || 'item.png'}`)
+      h2.title.title--single
+        a(href=`/item/${item.slug}`) #{item.name}
+      .single__actions_end
+      
+  .single__details.inner    
+    p= item.description
+
+    if item.tags
+      ul.tags
+        each tag in item.tags
+          li.tag
+            a.tag__link(href=`/tags/${tag}`)
+              span.tag__text  ##{tag}
+    
+    if user
+      +reviewForm(item)
+
+    if item.reviews
+      .reviews
+        each review in item.reviews
+          .review
+            +review(review)

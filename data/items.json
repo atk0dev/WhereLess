@@ -1,0 +1,13 @@
+[{
+    "_id": "52c039938060197ca0b52d4d",
+    "slug": "beer",
+    "name": "Beer",
+    "description": "Some beer.",
+    "author": "58c039018060197ca0b52d4c",
+    "photo": "a10ca916-af2a-4a98-96a1-3e320df006f9.jpeg",
+    "tags": [
+        "Beer"
+    ],
+    "created": "2018-03-08T17:04:19.860Z",
+    "store": "58c039938060197ca0b52d4d"
+}]

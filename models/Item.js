@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const slug = require('slugs');
 
-const storeSchema = new mongoose.Schema({
+const itemSchema = new mongoose.Schema({
     name: {
         type: String,
         trim: true,
-        required: 'Please enter a store name!'
+        required: 'Please enter an item name!'
     },
     slug: String,
     description: {
@@ -18,25 +18,16 @@ const storeSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    location: {
-        type: {
-            type: String,
-            default: 'Point'
-        },
-        coordinates: [{
-            type: Number,
-            required: 'You must supply coordinates!'
-        }],
-        address: {
-            type: String,
-            required: 'You must supply an address!'
-        }
-    },
     photo: String,
     author: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
         required: 'You must supply an author'
+    },
+    store: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Store',
+        required: 'You must supply a store'
     }
 }, {
     toJSON: { virtuals: true },
@@ -44,30 +35,28 @@ const storeSchema = new mongoose.Schema({
 });
 
 // Define our indexes
-storeSchema.index({
+itemSchema.index({
     name: 'text',
     description: 'text'
 });
 
-storeSchema.index({ location: '2dsphere' });
-
-storeSchema.pre('save', async function(next) {
+itemSchema.pre('save', async function(next) {
     if (!this.isModified('name')) {
         next(); // skip it
         return; // stop this function from running
     }
     this.slug = slug(this.name);
-    // find other stores that have a slug of wes, wes-1, wes-2
+    // find other items that have a slug of wes, wes-1, wes-2
     const slugRegEx = new RegExp(`^(${this.slug})((-[0-9]*$)?)$`, 'i');
-    const storesWithSlug = await this.constructor.find({ slug: slugRegEx });
-    if (storesWithSlug.length) {
-        this.slug = `${this.slug}-${storesWithSlug.length + 1}`;
+    const itemsWithSlug = await this.constructor.find({ slug: slugRegEx });
+    if (itemsWithSlug.length) {
+        this.slug = `${this.slug}-${itemsWithSlug.length + 1}`;
     }
     next();
     // TODO make more resiliant so slugs are unique
 });
 
-storeSchema.statics.getTagsList = function() {
+itemSchema.statics.getTagsList = function() {
     return this.aggregate([
         { $unwind: '$tags' },
         { $group: { _id: '$tags', count: { $sum: 1 } } },
@@ -75,10 +64,10 @@ storeSchema.statics.getTagsList = function() {
     ]);
 };
 
-storeSchema.statics.getTopStores = function() {
+itemSchema.statics.getTopItems = function() {
     return this.aggregate([
-        // Lookup Stores and populate their reviews
-        { $lookup: { from: 'reviews', localField: '_id', foreignField: 'store', as: 'reviews' } },
+        // Lookup Items and populate their reviews
+        { $lookup: { from: 'reviews', localField: '_id', foreignField: 'item', as: 'reviews' } },
         // filter for only items that have 2 or more reviews
         { $match: { 'reviews.1': { $exists: true } } },
         // Add the average reviews field
@@ -98,11 +87,11 @@ storeSchema.statics.getTopStores = function() {
     ]);
 }
 
-// find reviews where the stores _id property === reviews store property
-storeSchema.virtual('reviews', {
-    ref: 'StoreReview', // what model to link?
-    localField: '_id', // which field on the store?
-    foreignField: 'store' // which field on the review?
+// find reviews where the items _id property === reviews item property
+itemSchema.virtual('reviews', {
+    ref: 'ItemReview', // what model to link?
+    localField: '_id', // which field on the item?
+    foreignField: 'item' // which field on the review?
 });
 
 function autopopulate(next) {
@@ -110,7 +99,7 @@ function autopopulate(next) {
     next();
 }
 
-storeSchema.pre('find', autopopulate);
-storeSchema.pre('findOne', autopopulate);
+itemSchema.pre('find', autopopulate);
+itemSchema.pre('findOne', autopopulate);
 
-module.exports = mongoose.model('Store', storeSchema);
+module.exports = mongoose.model('Item', itemSchema);

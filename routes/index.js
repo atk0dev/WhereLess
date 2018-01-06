@@ -1,14 +1,31 @@
 const express = require('express');
 const router = express.Router();
 const storeController = require('../controllers/storeController');
+const itemController = require('../controllers/itemController');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 const reviewController = require('../controllers/reviewController');
 const { catchErrors } = require('../handlers/errorHandlers');
 
 router.get('/', catchErrors(storeController.getStores));
+
+/*****************************************      STORES  *****************************************/
+
 router.get('/stores', catchErrors(storeController.getStores));
 router.get('/stores/page/:page', catchErrors(storeController.getStores));
+router.get('/stores/:id/edit', catchErrors(storeController.editStore));
+router.get('/store/:slug', catchErrors(storeController.getStoreBySlug));
+
+/************************************************************************************************/
+
+/*****************************************      ITEMS   *****************************************/
+
+router.get('/items', catchErrors(itemController.getItems));
+router.get('/items/page/:page', catchErrors(itemController.getItems));
+router.get('/item/:slug', catchErrors(itemController.getItemBySlug));
+
+/************************************************************************************************/
+
 router.get('/add', authController.isLoggedIn, storeController.addStore);
 
 router.post('/add',
@@ -23,8 +40,7 @@ router.post('/add/:id',
     catchErrors(storeController.updateStore)
 );
 
-router.get('/stores/:id/edit', catchErrors(storeController.editStore));
-router.get('/store/:slug', catchErrors(storeController.getStoreBySlug));
+
 
 router.get('/store/:id/delete', catchErrors(storeController.deleteStore));
 router.post('/store/:id/delete', catchErrors(storeController.dropStore));
@@ -64,12 +80,14 @@ router.post('/reviews/:id',
 
 router.get('/top', catchErrors(storeController.getTopStores));
 
-/*
-  API
-*/
+/*****************************************      API     *****************************************/
 
 router.get('/api/search', catchErrors(storeController.searchStores));
 router.get('/api/stores/near', catchErrors(storeController.mapStores));
 router.post('/api/stores/:id/heart', catchErrors(storeController.heartStore));
+
+router.post('/api/items/:id/heart', catchErrors(itemController.heartItem));
+
+/************************************************************************************************/
 
 module.exports = router;
