@@ -5,9 +5,12 @@ const itemController = require('../controllers/itemController');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 const reviewController = require('../controllers/reviewController');
+const homeController = require('../controllers/homeController');
 const { catchErrors } = require('../handlers/errorHandlers');
 
 router.get('/', catchErrors(storeController.getStores));
+
+router.get('/add', authController.isLoggedIn, homeController.add);
 
 /*****************************************      STORES  *****************************************/
 
@@ -16,34 +19,51 @@ router.get('/stores/page/:page', catchErrors(storeController.getStores));
 router.get('/stores/:id/edit', catchErrors(storeController.editStore));
 router.get('/store/:slug', catchErrors(storeController.getStoreBySlug));
 
-/************************************************************************************************/
+router.get('/addstore', authController.isLoggedIn, storeController.addStore);
 
-/*****************************************      ITEMS   *****************************************/
-
-router.get('/items', catchErrors(itemController.getItems));
-router.get('/items/page/:page', catchErrors(itemController.getItems));
-router.get('/item/:slug', catchErrors(itemController.getItemBySlug));
-
-/************************************************************************************************/
-
-router.get('/add', authController.isLoggedIn, storeController.addStore);
-
-router.post('/add',
+router.post('/addstore',
     storeController.upload,
     catchErrors(storeController.resize),
     catchErrors(storeController.createStore)
 );
 
-router.post('/add/:id',
+router.post('/addstore/:id',
     storeController.upload,
     catchErrors(storeController.resize),
     catchErrors(storeController.updateStore)
 );
 
-
-
 router.get('/store/:id/delete', catchErrors(storeController.deleteStore));
 router.post('/store/:id/delete', catchErrors(storeController.dropStore));
+
+/************************************************************************************************/
+
+
+/*****************************************      ITEMS   *****************************************/
+
+router.get('/items', catchErrors(itemController.getItems));
+router.get('/items/page/:page', catchErrors(itemController.getItems));
+router.get('/items/:id/edit', catchErrors(itemController.editItem));
+router.get('/item/:slug', catchErrors(itemController.getItemBySlug));
+
+router.get('/additem', authController.isLoggedIn, itemController.addItem);
+
+router.post('/additem',
+    itemController.upload,
+    catchErrors(itemController.resize),
+    catchErrors(itemController.createItem)
+);
+
+router.post('/additem/:id',
+    itemController.upload,
+    catchErrors(itemController.resize),
+    catchErrors(itemController.updateItem)
+);
+
+router.get('/item/:id/delete', catchErrors(itemController.deleteItem));
+router.post('/item/:id/delete', catchErrors(itemController.dropItem));
+
+/************************************************************************************************/
 
 router.get('/tags', catchErrors(storeController.getStoresByTag));
 router.get('/tags/:tag', catchErrors(storeController.getStoresByTag));

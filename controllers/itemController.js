@@ -37,8 +37,25 @@ exports.getItemBySlug = async(req, res, next) => {
     res.render('item', { item, title: item.name });
 };
 
+exports.editItem = async(req, res) => {
+    // 1. Find the item given the ID
+    const item = await Item.findOne({ _id: req.params.id });
+    // 2. confirm they are the owner of the store
+    confirmOwner(item, req.user);
+    // 3. Render out the edit form so the user can update their store
+    res.render('editItem', { title: `Edit ${item.name}`, item });
+};
 
-/*
+const confirmOwner = (item, user) => {
+    if (!item.author.equals(user._id)) {
+        throw Error('You must own an item in order to edit it!');
+    }
+};
+
+exports.addItem = (req, res) => {
+    res.render('editItem', { title: 'Add Item' });
+};
+
 const multerOptions = {
     storage: multer.memoryStorage(),
     fileFilter(req, file, next) {
@@ -49,14 +66,6 @@ const multerOptions = {
             next({ message: 'That filetype isn\'t allowed!' }, false);
         }
     }
-};
-/*
-exports.homePage = (req, res) => {
-    res.render('index');
-};
-
-exports.addStore = (req, res) => {
-    res.render('editStore', { title: 'Add Store' });
 };
 
 exports.upload = multer(multerOptions).single('photo');
@@ -77,42 +86,54 @@ exports.resize = async(req, res, next) => {
     next();
 };
 
-exports.createStore = async(req, res) => {
+exports.createItem = async(req, res) => {
     req.body.author = req.user._id;
-    const store = await (new Store(req.body)).save();
-    req.flash('success', `Successfully Created ${store.name}. Care to leave a review?`);
-    res.redirect(`/store/${store.slug}`);
-};
-*/
-
-/*
-const confirmOwner = (store, user) => {
-    if (!store.author.equals(user._id)) {
-        throw Error('You must own a store in order to edit it!');
-    }
+    const item = await (new Item(req.body)).save();
+    req.flash('success', `Successfully Created ${item.name}. Care to leave a review?`);
+    res.redirect(`/item/${item.slug}`);
 };
 
-
-exports.editStore = async(req, res) => {
-    // 1. Find the store given the ID
-    const store = await Store.findOne({ _id: req.params.id });
-    // 2. confirm they are the owner of the store
-    confirmOwner(store, req.user);
-    // 3. Render out the edit form so the user can update their store
-    res.render('editStore', { title: `Edit ${store.name}`, store });
-};
-/*
-exports.updateStore = async(req, res) => {
-    // set the location data to be a point
-    req.body.location.type = 'Point';
-    // find and update the store
-    const store = await Store.findOneAndUpdate({ _id: req.params.id }, req.body, {
+exports.updateItem = async(req, res) => {
+    console.log(req.body);
+    // find and update the item
+    const item = await Item.findOneAndUpdate({ _id: req.params.id }, req.body, {
         new: true, // return the new store instead of the old one
         runValidators: true
     }).exec();
-    req.flash('success', `Successfully updated <strong>${store.name}</strong>. <a href="/stores/${store.slug}">View Store →</a>`);
-    res.redirect(`/stores/${store._id}/edit`);
-    // Redriect them the store and tell them it worked
+    req.flash('success', `Successfully updated <strong>${item.name}</strong>. <a href="/item/${item.slug}">View Item →</a>`);
+    res.redirect(`/items/${item._id}/edit`);
+    // Redriect them the item and tell them it worked
+};
+
+exports.deleteItem = async(req, res) => {
+    // 1. Find the item given the ID
+    const item = await Item.findOne({ _id: req.params.id });
+    // 2. confirm admin rights
+    confirmAdmin(req.user);
+    // 3. Render out the edit form so the user can update their item
+    res.render('deleteItem', { title: `Delete ${item.name}`, item });
+};
+
+exports.dropItem = async(req, res) => {
+    confirmAdmin(req.user);
+    const item = await Item.find({ _id: req.params.id }).remove().exec();
+    req.flash('success', `Successfully deleted item.`);
+    res.redirect(`/items`);
+};
+
+const confirmAdmin = (user) => {
+    let isAdmin = false;
+    if ((user.roles) && (user.roles.indexOf("admin") >= 0)) {
+        isAdmin = true;
+    }
+    if (!isAdmin) {
+        throw Error('You must have admin right in order to delete it!');
+    }
+};
+
+/*
+exports.homePage = (req, res) => {
+    res.render('index');
 };
 
 exports.getStoresByTag = async(req, res) => {
@@ -197,33 +218,4 @@ exports.getTopStores = async(req, res) => {
     const stores = await Store.getTopStores();
     res.render('topStores', { stores, title: '⭐ Top Stores!' });
 }
-*/
-/*
-const confirmAdmin = (user) => {
-    let isAdmin = false;
-    if ((user.roles) && (user.roles.indexOf("admin") >= 0)) {
-        isAdmin = true;
-    }
-    if (!isAdmin) {
-        throw Error('You must have admin right in order to delete it!');
-    }
-};
-*/
-/*
-exports.deleteStore = async(req, res) => {
-    // 1. Find the store given the ID
-    const store = await Store.findOne({ _id: req.params.id });
-    // 2. confirm admin rights
-    confirmAdmin(req.user);
-    // 3. Render out the edit form so the user can update their store
-    res.render('deleteStore', { title: `Delete ${store.name}`, store });
-};
-*/
-/*
-exports.dropStore = async(req, res) => {
-    confirmAdmin(req.user);
-    const store = await Store.find({ _id: req.params.id }).remove().exec();
-    req.flash('success', `Successfully deleted store.`);
-    res.redirect(`/stores`);
-};
 */
