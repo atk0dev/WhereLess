@@ -1,3 +1,5 @@
+const tr = require('transliteration');
+
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const slug = require('slugs');
@@ -45,7 +47,8 @@ itemSchema.pre('save', async function(next) {
         next(); // skip it
         return; // stop this function from running
     }
-    this.slug = slug(this.name);
+
+    this.slug = slug(tr.transliterate(this.name));
     // find other items that have a slug of wes, wes-1, wes-2
     const slugRegEx = new RegExp(`^(${this.slug})((-[0-9]*$)?)$`, 'i');
     const itemsWithSlug = await this.constructor.find({ slug: slugRegEx });

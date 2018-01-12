@@ -7,7 +7,7 @@ const uuid = require('uuid');
 
 exports.getItems = async(req, res) => {
     const page = req.params.page || 1;
-    const limit = 4;
+    const limit = 6;
     const skip = (page * limit) - limit;
 
     // 1. Query the database for a list of all items
@@ -39,7 +39,7 @@ exports.getItemBySlug = async(req, res, next) => {
 
 exports.editItem = async(req, res) => {
     // 1. Find the item given the ID
-    const item = await Item.findOne({ _id: req.params.id });
+    const item = await Item.findOne({ _id: req.params.id }).populate('store');
     // 2. confirm they are the owner of the store
     confirmOwner(item, req.user);
     // 3. Render out the edit form so the user can update their store

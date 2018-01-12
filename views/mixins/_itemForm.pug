@@ -1,6 +1,6 @@
 mixin itemForm(item = {})
   form(action=`/additem/${item._id || ''}` method="POST" class="card" enctype="multipart/form-data")
-    pre= h.dump(item)
+    //pre= h.dump(item)
     label(for="name") Name
     input(type="text" name="name" value=item.name)
     label(for="description") Description
@@ -11,9 +11,15 @@ mixin itemForm(item = {})
       if item.photo
         img(src=`/uploads/${item.photo}`, alt=item.name width=200)
     
-    label(for="store") Store
-    input(type="text" name="store" value=item.store)
-        
+    
+
+    label(for="storelookup") Store Lookup    
+    .storelookup
+      input.storelookup__selected(type="hidden" name="store" value=item.store)
+      input.storelookup__input(type="text" placeholder="Store name" name="storelookup" value=(item.store && item.store.name))
+      .storelookup__results
+
+    
     //- address, lng and lat
     //label(for="address") Address
     //input(type="text" id="address" name="location[address]" value=(store.location && store.location.address))

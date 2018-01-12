@@ -1110,7 +1110,7 @@ exports.default = makeMap;
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _axios = __webpack_require__(2);
@@ -1123,69 +1123,79 @@ var _dompurify2 = _interopRequireDefault(_dompurify);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function searchResultsHTML(stores) {
-  return stores.map(function (store) {
-    return '\n      <a href="/store/' + store.slug + '" class="search__result">\n        <strong>' + store.name + '</strong>\n      </a>\n    ';
-  }).join('');
+function searchResultsHTML(stores, inputName) {
+    return stores.map(function (store) {
+        return '\n      <a href="/store/' + store.slug + '" class="' + inputName + '__result" data-store-id="' + store.id + '">\n        <strong data-store-id="' + store.id + '">' + store.name + '</strong>\n      </a>\n    ';
+    }).join('');
 }
 
-function typeAhead(search) {
-  if (!search) return;
+function typeAhead(search, inputName, selectedName) {
+    if (!search) return;
 
-  var searchInput = search.querySelector('input[name="search"]');
-  var searchResults = search.querySelector('.search__results');
+    var searchInput = search.querySelector('input[name="' + inputName + '"]');
+    var searchResults = search.querySelector('.' + inputName + '__results');
 
-  searchInput.on('input', function () {
-    var _this = this;
-
-    // if there is no value, quit it!
-    if (!this.value) {
-      searchResults.style.display = 'none';
-      return; // stop!
+    if (selectedName) {
+        searchResults.on('click', function (e) {
+            e.preventDefault();
+            var storeId = e.target.getAttribute("data-store-id");
+            searchInput.value = e.target.innerText;
+            searchResults.style.display = 'none';
+            search.querySelector('.' + selectedName).value = storeId;
+        });
     }
 
-    // show the search results!
-    searchResults.style.display = 'block';
+    searchInput.on('input', function () {
+        var _this = this;
 
-    _axios2.default.get('/api/search?q=' + this.value).then(function (res) {
-      if (res.data.length) {
-        searchResults.innerHTML = _dompurify2.default.sanitize(searchResultsHTML(res.data));
-        return;
-      }
-      // tell them nothing came back
-      searchResults.innerHTML = _dompurify2.default.sanitize('<div class="search__result">No results for ' + _this.value + '</div>');
-    }).catch(function (err) {
-      console.error(err);
+        // if there is no value, quit it!
+        if (!this.value) {
+            searchResults.style.display = 'none';
+            return; // stop!
+        }
+
+        // show the search results!
+        searchResults.style.display = 'block';
+
+        _axios2.default.get('/api/search?q=' + this.value).then(function (res) {
+            if (res.data.length) {
+                searchResults.innerHTML = _dompurify2.default.sanitize(searchResultsHTML(res.data, inputName));
+                return;
+            }
+            // tell them nothing came back
+            searchResults.innerHTML = _dompurify2.default.sanitize('<div class="' + inputName + '__result">No results for ' + _this.value + '</div>');
+        }).catch(function (err) {
+            console.error(err);
+        });
     });
-  });
 
-  // handle keyboard inputs
-  searchInput.on('keyup', function (e) {
-    // if they aren't pressing up, down or enter, who cares!
-    if (![38, 40, 13].includes(e.keyCode)) {
-      return; // nah
-    }
-    var activeClass = 'search__result--active';
-    var current = search.querySelector('.' + activeClass);
-    var items = search.querySelectorAll('.search__result');
-    var next = void 0;
-    if (e.keyCode === 40 && current) {
-      next = current.nextElementSibling || items[0];
-    } else if (e.keyCode === 40) {
-      next = items[0];
-    } else if (e.keyCode === 38 && current) {
-      next = current.previousElementSibling || items[items.length - 1];
-    } else if (e.keyCode === 38) {
-      next = items[items.length - 1];
-    } else if (e.keyCode === 13 && current.href) {
-      window.location = current.href;
-      return;
-    }
-    if (current) {
-      current.classList.remove(activeClass);
-    }
-    next.classList.add(activeClass);
-  });
+    // handle keyboard inputs
+    searchInput.on('keyup', function (e) {
+        // if they aren't pressing up, down or enter, who cares!
+        if (![38, 40, 13].includes(e.keyCode)) {
+            return; // nah
+        }
+        var activeClass = inputName + '__result--active';
+        var current = search.querySelector('.' + activeClass);
+        var items = search.querySelectorAll('.' + inputName + '__result');
+        var next = void 0;
+        if (e.keyCode === 40 && current) {
+            next = current.nextElementSibling || items[0];
+        } else if (e.keyCode === 40) {
+            next = items[0];
+        } else if (e.keyCode === 38 && current) {
+            next = current.previousElementSibling || items[items.length - 1];
+        } else if (e.keyCode === 38) {
+            next = items[items.length - 1];
+        } else if (e.keyCode === 13 && current.href) {
+            window.location = current.href;
+            return;
+        }
+        if (current) {
+            current.classList.remove(activeClass);
+        }
+        next.classList.add(activeClass);
+    });
 }
 
 exports.default = typeAhead;
@@ -2877,9 +2887,13 @@ var _heart2 = _interopRequireDefault(_heart);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// debugger;
+// console.log('JS app started');
+
 (0, _autocomplete2.default)((0, _bling.$)('#address'), (0, _bling.$)('#lat'), (0, _bling.$)('#lng'));
 
-(0, _typeAhead2.default)((0, _bling.$)('.search'));
+(0, _typeAhead2.default)((0, _bling.$)('.search'), 'search');
+(0, _typeAhead2.default)((0, _bling.$)('.storelookup'), 'storelookup', 'storelookup__selected');
 
 (0, _map2.default)((0, _bling.$)('#map'));
 

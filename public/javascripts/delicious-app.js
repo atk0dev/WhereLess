@@ -6,11 +6,15 @@ import typeAhead from './modules/typeAhead';
 import makeMap from './modules/map';
 import ajaxHeart from './modules/heart';
 
-autocomplete( $('#address'), $('#lat'), $('#lng') );
+// debugger;
+// console.log('JS app started');
 
-typeAhead( $('.search') );
+autocomplete($('#address'), $('#lat'), $('#lng'));
 
-makeMap( $('#map') );
+typeAhead($('.search'), 'search');
+typeAhead($('.storelookup'), 'storelookup', 'storelookup__selected');
+
+makeMap($('#map'));
 
 const heartForms = $$('form.heart');
 heartForms.on('submit', ajaxHeart);
