@@ -43,7 +43,7 @@ router.post('/store/:id/delete', catchErrors(storeController.dropStore));
 
 router.get('/items', catchErrors(itemController.getItems));
 router.get('/items/page/:page', catchErrors(itemController.getItems));
-router.get('/items/:id/edit', catchErrors(itemController.editItem));
+router.get('/item/:id/edit', catchErrors(itemController.editItem));
 router.get('/item/:slug', catchErrors(itemController.getItemBySlug));
 
 router.get('/additem', authController.isLoggedIn, itemController.addItem);
@@ -62,6 +62,8 @@ router.post('/additem/:id',
 
 router.get('/item/:id/delete', catchErrors(itemController.deleteItem));
 router.post('/item/:id/delete', catchErrors(itemController.dropItem));
+
+router.get('/item/:id/prices', catchErrors(itemController.getItemWithPrices));
 
 /************************************************************************************************/
 

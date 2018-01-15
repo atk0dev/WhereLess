@@ -31,11 +31,17 @@ exports.getItems = async(req, res) => {
 };
 
 exports.getItemBySlug = async(req, res, next) => {
-    const item = await Item.findOne({ slug: req.params.slug }).populate('author reviews store');
+    const item = await Item.findOne({ slug: req.params.slug }).populate('author reviews');
     if (!item) return next();
-    console.log(item);
     res.render('item', { item, title: item.name });
 };
+
+exports.getItemWithPrices = async(req, res, next) => {
+    const item = await Item.findOne({ _id: req.params.id }).populate('author prices');
+    if (!item) return next();
+    res.render('item_w_prices', { item, title: item.name });
+};
+
 
 exports.editItem = async(req, res) => {
     // 1. Find the item given the ID
