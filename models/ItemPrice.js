@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
-const itemReviewSchema = new mongoose.Schema({
+const itemPriceSchema = new mongoose.Schema({
   created: {
     type: Date,
     default: Date.now
@@ -16,23 +16,27 @@ const itemReviewSchema = new mongoose.Schema({
     ref: 'Item',
     required: 'You must supply an item!'
   },
-  text: {
-    type: String,
-    required: 'Your review must have text!'
+  store: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Store',
+    required: 'You must supply a store!'
   },
-  rating: {
-    type: Number,
-    min: 1,
-    max: 5
+  text: {
+    type: String
+  },
+  price: {
+    type: Number
   }
 });
 
 function autopopulate(next) {
   this.populate('author');
+  this.populate('item');
+  this.populate('store');
   next();
 }
 
-itemReviewSchema.pre('find', autopopulate);
-itemReviewSchema.pre('findOne', autopopulate);
+itemPriceSchema.pre('find', autopopulate);
+itemPriceSchema.pre('findOne', autopopulate);
 
-module.exports = mongoose.model('ItemReview', itemReviewSchema);
+module.exports = mongoose.model('ItemPrice', itemPriceSchema);

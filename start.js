@@ -7,7 +7,7 @@ require('dotenv').config({ path: 'variables.env' });
 mongoose.connect(process.env.DATABASE, { useMongoClient: true });
 mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises
 mongoose.connection.on('error', (err) => {
-    console.error(`mongoose connection error → ${err.message}`);
+  console.error(`mongoose connection error → ${err.message}`);
 });
 
 // READY?! Let's go!
@@ -18,6 +18,7 @@ require('./models/Store');
 require('./models/StoreReview');
 require('./models/Item');
 require('./models/ItemReview');
+require('./models/ItemPrice');
 
 // Start our app!
 const app = require('./app');

@@ -37,7 +37,7 @@ exports.getItemBySlug = async(req, res, next) => {
 };
 
 exports.getItemWithPrices = async(req, res, next) => {
-    const item = await Item.findOne({ _id: req.params.id }).populate('author prices');
+    const item = await Item.findOne({ _id: req.params.id }).populate('author');
     if (!item) return next();
     res.render('item_w_prices', { item, title: item.name });
 };
