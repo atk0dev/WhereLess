@@ -1,17 +1,18 @@
 import axios from 'axios';
 import dompurify from 'dompurify';
 
-function searchResultsHTML(stores, inputName) {
-    return stores.map(store => {
+function searchResultsHTML(objects, inputName, objectName) {
+    return objects.map(obj => {
         return `
-      <a href="/store/${store.slug}" class="${inputName}__result" data-store-id="${store.id}">
-        <strong data-store-id="${store.id}">${store.name}</strong>
+      <a href="/${objectName}/${obj.slug}" class="${inputName}__result" data-${objectName}-id="${obj.id}">
+        <strong data-${objectName}-id="${obj.id}">${obj.name}</strong>
       </a>
     `;
     }).join('');
 }
 
-function typeAhead(search, inputName, selectedName) {
+function typeAhead(search, inputName, selectedName, objectName) {
+    
     if (!search) return;
 
     const searchInput = search.querySelector(`input[name="${inputName}"]`);
@@ -20,10 +21,10 @@ function typeAhead(search, inputName, selectedName) {
     if (selectedName) {
         searchResults.on('click', function(e) {
             e.preventDefault();
-            var storeId = e.target.getAttribute("data-store-id");
+            var objectId = e.target.getAttribute(`data-${objectName}-id`);
             searchInput.value = e.target.innerText;
             searchResults.style.display = 'none';
-            search.querySelector(`.${selectedName}`).value = storeId;
+            search.querySelector(`.${selectedName}`).value = objectId;
         });
     }
 
@@ -38,10 +39,10 @@ function typeAhead(search, inputName, selectedName) {
         searchResults.style.display = 'block';
 
         axios
-            .get(`/api/search?q=${this.value}`)
+            .get(`/api/search${objectName}?q=${this.value}`)
             .then(res => {
                 if (res.data.length) {
-                    searchResults.innerHTML = dompurify.sanitize(searchResultsHTML(res.data, inputName));
+                    searchResults.innerHTML = dompurify.sanitize(searchResultsHTML(res.data, inputName, objectName));
                     return;
                 }
                 // tell them nothing came back

@@ -18,7 +18,7 @@ require('./models/Store');
 require('./models/StoreReview');
 require('./models/Item');
 require('./models/ItemReview');
-require('./models/ItemPrice');
+require('./models/Offer');
 
 // Start our app!
 const app = require('./app');

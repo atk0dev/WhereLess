@@ -1,0 +1,8 @@
+extends layout
+
+include mixins/_offerForm
+
+block content
+  .inner
+    h2= title
+    +offerForm(offer)

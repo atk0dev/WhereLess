@@ -153,11 +153,10 @@ exports.getStoresByTag = async(req, res) => {
 
     res.render('tag', { tags, title: 'Tags', tag, stores });
 };
+*/
 
-/*
-exports.searchStores = async(req, res) => {
-    const stores = await Store
-        // first find stores that match
+exports.searchItems = async(req, res) => {
+    const items = await Item
         .find({
             $text: {
                 $search: req.query.q
@@ -165,15 +164,13 @@ exports.searchStores = async(req, res) => {
         }, {
             score: { $meta: 'textScore' }
         })
-        // the sort them
         .sort({
             score: { $meta: 'textScore' }
         })
-        // limit to only 5 results
         .limit(5);
-    res.json(stores);
+    res.json(items);
 };
-*/
+
 /*
 exports.mapStores = async(req, res) => {
     const coordinates = [req.query.lng, req.query.lat].map(parseFloat);

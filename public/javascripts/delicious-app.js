@@ -11,8 +11,9 @@ import ajaxHeart from './modules/heart';
 
 autocomplete($('#address'), $('#lat'), $('#lng'));
 
-typeAhead($('.search'), 'search');
-typeAhead($('.storelookup'), 'storelookup', 'storelookup__selected');
+typeAhead($('.search'), 'search', null, 'store');
+typeAhead($('.storelookup'), 'storelookup', 'storelookup__selected', 'store');
+typeAhead($('.itemlookup'), 'itemlookup', 'itemlookup__selected', 'item');
 
 makeMap($('#map'));
 

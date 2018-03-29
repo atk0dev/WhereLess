@@ -1,0 +1,26 @@
+mixin offerForm(offer = {})
+  form(action=`/addoffer/${offer._id || ''}` method="POST" class="card")
+    pre= h.dump(offer)
+    
+    label(for="storelookup") Store Lookup
+    .storelookup
+      input.storelookup__selected(type="hidden" name="store" value=offer.store)
+      input.storelookup__input(type="text" placeholder="Store name" name="storelookup" value=(offer.store && offer.store.name))
+      .storelookup__results
+    
+    label(for="itemlookup") Item Lookup
+    .itemlookup
+      input.itemlookup__selected(type="hidden" name="item" value=offer.item)
+      input.itemlookup__input(type="text" placeholder="Item name" name="itemlookup" value=(offer.item && offer.item.name))
+      .itemlookup__results
+    
+    label(for="price") Price
+    input(type="number" name="price" value=offer.price)
+    
+    label(for="text") Text
+    textarea(name="text")= offer.text
+
+    input(type="submit" value="Save →" class="button")
+
+block scripts
+  script(src="/dist/App.bundle.js")

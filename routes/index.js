@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const storeController = require('../controllers/storeController');
 const itemController = require('../controllers/itemController');
+const offerController = require('../controllers/offerController');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 const reviewController = require('../controllers/reviewController');
@@ -67,6 +68,18 @@ router.get('/item/:id/prices', catchErrors(itemController.getItemWithPrices));
 
 /************************************************************************************************/
 
+
+/*****************************************      OFFERS   ****************************************/
+
+router.get('/addoffer', authController.isLoggedIn, offerController.addOffer);
+
+router.post('/addoffer', catchErrors(offerController.createOffer));
+
+router.post('/addoffer/:id', catchErrors(offerController.updateOffer));
+
+/************************************************************************************************/
+
+
 router.get('/tags', catchErrors(storeController.getStoresByTag));
 router.get('/tags/:tag', catchErrors(storeController.getStoresByTag));
 
@@ -104,7 +117,9 @@ router.get('/top', catchErrors(storeController.getTopStores));
 
 /*****************************************      API     *****************************************/
 
-router.get('/api/search', catchErrors(storeController.searchStores));
+router.get('/api/searchstore', catchErrors(storeController.searchStores));
+router.get('/api/searchitem', catchErrors(itemController.searchItems));
+
 router.get('/api/stores/near', catchErrors(storeController.mapStores));
 router.post('/api/stores/:id/heart', catchErrors(storeController.heartStore));
 

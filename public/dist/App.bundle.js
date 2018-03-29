@@ -960,21 +960,21 @@ process.umask = function () {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 function autocomplete(input, latInput, lngInput) {
-  if (!input) return; // skip this fn from running if there is not input on the page
-  var dropdown = new google.maps.places.Autocomplete(input);
+    if (!input) return; // skip this fn from running if there is not input on the page
+    var dropdown = new google.maps.places.Autocomplete(input);
 
-  dropdown.addListener('place_changed', function () {
-    var place = dropdown.getPlace();
-    latInput.value = place.geometry.location.lat();
-    lngInput.value = place.geometry.location.lng();
-  });
-  // if someone hits enter on the address field, don't submit the form
-  input.on('keydown', function (e) {
-    if (e.keyCode === 13) e.preventDefault();
-  });
+    dropdown.addListener('place_changed', function () {
+        var place = dropdown.getPlace();
+        latInput.value = place.geometry.location.lat();
+        lngInput.value = place.geometry.location.lng();
+    });
+    // if someone hits enter on the address field, don't submit the form
+    input.on('keydown', function (e) {
+        if (e.keyCode === 13) e.preventDefault();
+    });
 }
 
 exports.default = autocomplete;
@@ -1123,13 +1123,14 @@ var _dompurify2 = _interopRequireDefault(_dompurify);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function searchResultsHTML(stores, inputName) {
-    return stores.map(function (store) {
-        return '\n      <a href="/store/' + store.slug + '" class="' + inputName + '__result" data-store-id="' + store.id + '">\n        <strong data-store-id="' + store.id + '">' + store.name + '</strong>\n      </a>\n    ';
+function searchResultsHTML(objects, inputName, objectName) {
+    return objects.map(function (obj) {
+        return '\n      <a href="/' + objectName + '/' + obj.slug + '" class="' + inputName + '__result" data-' + objectName + '-id="' + obj.id + '">\n        <strong data-' + objectName + '-id="' + obj.id + '">' + obj.name + '</strong>\n      </a>\n    ';
     }).join('');
 }
 
-function typeAhead(search, inputName, selectedName) {
+function typeAhead(search, inputName, selectedName, objectName) {
+
     if (!search) return;
 
     var searchInput = search.querySelector('input[name="' + inputName + '"]');
@@ -1138,10 +1139,10 @@ function typeAhead(search, inputName, selectedName) {
     if (selectedName) {
         searchResults.on('click', function (e) {
             e.preventDefault();
-            var storeId = e.target.getAttribute("data-store-id");
+            var objectId = e.target.getAttribute('data-' + objectName + '-id');
             searchInput.value = e.target.innerText;
             searchResults.style.display = 'none';
-            search.querySelector('.' + selectedName).value = storeId;
+            search.querySelector('.' + selectedName).value = objectId;
         });
     }
 
@@ -1157,9 +1158,9 @@ function typeAhead(search, inputName, selectedName) {
         // show the search results!
         searchResults.style.display = 'block';
 
-        _axios2.default.get('/api/search?q=' + this.value).then(function (res) {
+        _axios2.default.get('/api/search' + objectName + '?q=' + this.value).then(function (res) {
             if (res.data.length) {
-                searchResults.innerHTML = _dompurify2.default.sanitize(searchResultsHTML(res.data, inputName));
+                searchResults.innerHTML = _dompurify2.default.sanitize(searchResultsHTML(res.data, inputName, objectName));
                 return;
             }
             // tell them nothing came back
@@ -2892,8 +2893,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 (0, _autocomplete2.default)((0, _bling.$)('#address'), (0, _bling.$)('#lat'), (0, _bling.$)('#lng'));
 
-(0, _typeAhead2.default)((0, _bling.$)('.search'), 'search');
-(0, _typeAhead2.default)((0, _bling.$)('.storelookup'), 'storelookup', 'storelookup__selected');
+(0, _typeAhead2.default)((0, _bling.$)('.search'), 'search', null, 'store');
+(0, _typeAhead2.default)((0, _bling.$)('.storelookup'), 'storelookup', 'storelookup__selected', 'store');
+(0, _typeAhead2.default)((0, _bling.$)('.itemlookup'), 'itemlookup', 'itemlookup__selected', 'item');
 
 (0, _map2.default)((0, _bling.$)('#map'));
 
